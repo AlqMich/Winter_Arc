@@ -1,4 +1,4 @@
-import type { AppData, Habit, Goal, GoalCategory, GoalSource } from './types';
+import type { AppData, Habit, Goal, GoalCategory, GoalSource, Reminder } from './types';
 import { today } from './dates';
 
 const ALL = [0, 1, 2, 3, 4, 5, 6];
@@ -51,7 +51,19 @@ export function defaultData(): AppData {
     money: [],
     notes: [],
     reviews: {},
+    reminders: defaultReminders(),
   };
+}
+
+/** Horarios genéricos y editables. Solo "Cerrar el día" viene activo. */
+export function defaultReminders(closeTime = '21:00'): Reminder[] {
+  return [
+    { id: 'wake', kind: 'wake', enabled: false, time: '07:00', days: [] },
+    { id: 'water', kind: 'water', enabled: false, time: '10:00', until: '20:00', every: 120, days: [] },
+    { id: 'workout', kind: 'workout', enabled: false, time: '18:00', days: [] },
+    { id: 'close', kind: 'close', enabled: true, time: closeTime, days: [] },
+    { id: 'sleep', kind: 'sleep', enabled: false, time: '22:30', days: [] },
+  ];
 }
 
 export interface GoalTemplate {

@@ -10,6 +10,8 @@ import Goals from './screens/Goals';
 import More, { Workouts, Notes } from './screens/More';
 import Finance from './screens/Finance';
 import { HabitsAdmin, Settings, DataScreen } from './screens/Setup';
+import Reminders from './screens/Reminders';
+import { syncPush } from './lib/push';
 import { today, fmtLong, addDays } from './lib/dates';
 import type { ISODate } from './lib/types';
 
@@ -22,7 +24,7 @@ const TABS: { id: Tab; label: string; icon: React.ReactNode }[] = [
 ];
 
 const SUB_TITLES: Record<Exclude<Sub, null>, string> = {
-  entrenos: 'Entrenamientos', finanzas: 'Finanzas', notas: 'Notas', habitos: 'Hábitos', ajustes: 'Ajustes', datos: 'Datos y respaldo',
+  recordatorios: 'Recordatorios', entrenos: 'Entrenamientos', finanzas: 'Finanzas', notas: 'Notas', habitos: 'Hábitos', ajustes: 'Ajustes', datos: 'Datos y respaldo',
 };
 
 function Shell() {
@@ -48,6 +50,20 @@ function Shell() {
     document.querySelector('meta[name="theme-color"]')?.setAttribute('content', dark ? '#0d0f12' : '#f1f3f5');
   }, [data.settings.theme]);
 
+  // Notificaciones: mantiene al servidor al tanto de recordatorios y de lo que ya registraste hoy.
+  const dataRef = React.useRef(data);
+  dataRef.current = data;
+  useEffect(() => {
+    const t = window.setTimeout(() => syncPush(data), 4000);
+    return () => window.clearTimeout(t);
+  }, [data]);
+  useEffect(() => {
+    syncPush(dataRef.current);
+    const onVis = () => { if (document.visibilityState === 'hidden') syncPush(dataRef.current); };
+    document.addEventListener('visibilitychange', onVis);
+    return () => document.removeEventListener('visibilitychange', onVis);
+  }, []);
+
   // Botón atrás del sistema / gesto: cierra subpágina en lugar de salir.
   useEffect(() => {
     const onPop = () => setSub(null);
@@ -72,6 +88,7 @@ function Shell() {
         {sub === 'habitos' && <HabitsAdmin />}
         {sub === 'ajustes' && <Settings />}
         {sub === 'datos' && <DataScreen />}
+        {sub === 'recordatorios' && <Reminders />}
       </>
     );
   } else {

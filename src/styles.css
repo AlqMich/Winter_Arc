@@ -422,3 +422,6 @@ details.more > .stack { padding-bottom: 8px; }
 @media (min-width: 700px) {
   .app { padding-top: 24px; }
 }
+
+.switch-btn { min-width: 58px; min-height: 44px; display: flex; align-items: center; justify-content: flex-end; flex: none; }
+.rem-time { font-size: 15px; font-weight: 600; color: var(--ink); }

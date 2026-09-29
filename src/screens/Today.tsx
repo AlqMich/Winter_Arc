@@ -52,7 +52,8 @@ export default function Today() {
   const yesterday = addDays(now, -1);
   const yesterdayMissing = isToday && arc.started && diffDays(data.settings.startDate, yesterday) >= 0 && !hasData(data, yesterday);
   const hour = new Date().toTimeString().slice(0, 5);
-  const remind = isToday && !log?.closed && data.settings.reminderTime && hour >= data.settings.reminderTime;
+  const closeRem = data.reminders.find((r) => r.kind === 'close' && r.enabled);
+  const remind = isToday && !log?.closed && closeRem && hour >= closeRem.time;
 
   const remaining = score.total - score.done;
 

@@ -134,6 +134,22 @@ export interface WeeklyReview {
   savedAt?: number;
 }
 
+export type ReminderKind = 'wake' | 'sleep' | 'water' | 'workout' | 'close' | 'habit' | 'custom';
+
+/** Recordatorio enviado como notificación push por el servidor. */
+export interface Reminder {
+  id: string;
+  kind: ReminderKind;
+  enabled: boolean;
+  time: string;          // HH:MM (inicio para 'water')
+  days: number[];        // 0 = domingo … 6 = sábado; vacío = todos
+  until?: string;        // solo 'water': hora final
+  every?: number;        // solo 'water': minutos entre avisos
+  habitId?: string;      // solo 'habit'
+  title?: string;        // 'custom' / 'habit'
+  body?: string;
+}
+
 export interface Settings {
   startDate: ISODate;
   durationDays: number;
@@ -158,4 +174,5 @@ export interface AppData {
   money: MoneyEntry[];
   notes: Note[];
   reviews: Record<ISODate, WeeklyReview>;
+  reminders: Reminder[];
 }

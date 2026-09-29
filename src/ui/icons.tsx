@@ -42,4 +42,5 @@ export const IconShare = (p: P) => <I {...p}><path d="M12 15V3M7.5 7.5 12 3l4.5 
 export const IconTrash = (p: P) => <I {...p}><path d="M4 7h16M9.5 7V4h5v3M6 7l1 13h10l1-13" /></I>;
 export const IconEdit = (p: P) => <I {...p}><path d="M4 20h4L19 9l-4-4L4 16v4Z" /><path d="m13.5 6.5 4 4" /></I>;
 export const IconCopy = (p: P) => <I {...p}><rect x="8" y="8" width="12" height="12" rx="2" /><path d="M16 8V4H4v12h4" /></I>;
+export const IconBell = (p: P) => <I {...p}><path d="M6 16V11a6 6 0 1 1 12 0v5l1.5 2h-15L6 16Z" /><path d="M10 20.5a2 2 0 0 0 4 0" /></I>;
 export const IconSearch = (p: P) => <I {...p}><circle cx="11" cy="11" r="6.5" /><path d="m20 20-4.2-4.2" /></I>;

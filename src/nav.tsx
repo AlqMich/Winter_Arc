@@ -2,7 +2,7 @@ import { createContext, useContext } from 'react';
 import type { ISODate } from './lib/types';
 
 export type Tab = 'hoy' | 'semana' | 'progreso' | 'metas' | 'mas';
-export type Sub = null | 'entrenos' | 'finanzas' | 'notas' | 'habitos' | 'ajustes' | 'datos';
+export type Sub = null | 'entrenos' | 'finanzas' | 'notas' | 'habitos' | 'ajustes' | 'datos' | 'recordatorios';
 
 export interface Nav {
   tab: Tab;

@@ -5,10 +5,11 @@ import type { Note, NoteType, Workout, WorkoutType } from '../lib/types';
 import { fmtShort, monthKey, today, weekStart, dowShort, parseISO } from '../lib/dates';
 import { uid } from '../lib/defaults';
 import { Chips, Field, Sheet, useUi, Empty, fmtNum, cx } from '../ui/kit';
-import { IconRun, IconWallet, IconNote, IconList, IconSettings, IconDatabase, IconRight, IconPlus, IconTrash, IconSearch, IconShare } from '../ui/icons';
+import { IconBell, IconRun, IconWallet, IconNote, IconList, IconSettings, IconDatabase, IconRight, IconPlus, IconTrash, IconSearch, IconShare } from '../ui/icons';
 import { WorkoutIcon, WorkoutSheet, workoutSummary, typeLabel, WORKOUT_TYPES } from '../ui/WorkoutSheet';
 
 const ITEMS: { sub: Exclude<Sub, null>; label: string; sub2: string; icon: React.ReactNode }[] = [
+  { sub: 'recordatorios', label: 'Recordatorios', sub2: 'Notificaciones: agua, entreno, dormir…', icon: <IconBell /> },
   { sub: 'entrenos', label: 'Entrenamientos', sub2: 'Historial y registro', icon: <IconRun /> },
   { sub: 'finanzas', label: 'Finanzas', sub2: 'Ingresos, gastos y ahorro', icon: <IconWallet /> },
   { sub: 'notas', label: 'Notas', sub2: 'Ideas, reflexiones, aprendizajes', icon: <IconNote /> },

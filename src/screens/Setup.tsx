@@ -202,12 +202,10 @@ export function Settings() {
         </ul>
       </div>
 
-      <SectionTitle>Apariencia y aviso</SectionTitle>
+      <SectionTitle>Apariencia</SectionTitle>
       <div className="card pad stack">
         <Field label="Tema"><Seg value={s.theme} onChange={(t) => set({ theme: t })} options={[{ value: 'system', label: 'Sistema' }, { value: 'light', label: 'Claro' }, { value: 'dark', label: 'Oscuro' }]} size="s" /></Field>
-        <Field label="Aviso para cerrar el día" htmlFor="s-rem" hint="A partir de esta hora, Hoy muestra un aviso si no has cerrado el día.">
-          <input id="s-rem" type="time" className="input" value={s.reminderTime ?? ''} onChange={(e) => set({ reminderTime: e.target.value || undefined })} />
-        </Field>
+        <p className="muted small">Los horarios de avisos y notificaciones están en Más → Recordatorios.</p>
       </div>
 
       <SectionTitle>Unidades y finanzas</SectionTitle>

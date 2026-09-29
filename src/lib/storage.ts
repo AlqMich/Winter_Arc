@@ -1,5 +1,5 @@
 import type { AppData, Habit } from './types';
-import { defaultData } from './defaults';
+import { defaultData, defaultReminders } from './defaults';
 
 /**
  * Adaptador de almacenamiento. Hoy: localStorage.
@@ -73,6 +73,7 @@ export function normalize(input: unknown): AppData {
     money: Array.isArray(d.money) ? d.money : [],
     notes: Array.isArray(d.notes) ? d.notes : [],
     reviews: d.reviews && typeof d.reviews === 'object' ? d.reviews : {},
+    reminders: Array.isArray(d.reminders) ? d.reminders : defaultReminders(d.settings?.reminderTime || '21:00'),
   };
 }
 

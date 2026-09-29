@@ -9,12 +9,22 @@ App web personal (PWA, mobile-first) para seguir un reto de 90 días: hábitos, 
 
 > Los datos viven en el navegador del dispositivo. En iPhone, la app instalada tiene su propio almacenamiento (distinto de Safari). Haz un respaldo JSON semanal en Más → Datos y respaldo.
 
+## Notificaciones (recordatorios push)
+Requieren desplegar desde GitHub (Netlify Drop no ejecuta funciones):
+1. Sube el contenido de esta carpeta a un repositorio de GitHub.
+2. En Netlify: Project configuration → Build & deploy → Link repository → elige el repo. `netlify.toml` ya trae la configuración.
+3. En el iPhone (iOS 16.4+), abre la app desde la pantalla de inicio → Más → Recordatorios → Activar notificaciones.
+
+Cómo funciona: `netlify/functions/push-api.mjs` guarda la suscripción, los recordatorios y un resumen del día (Netlify Blobs).
+`netlify/functions/push-cron.mjs` corre cada 5 minutos y envía lo que toca. Los recordatorios de agua, entrenar, cerrar el día y hábitos no se envían si ya lo registraste.
+Las llaves VAPID se generan solas la primera vez (o defínelas con `VAPID_PUBLIC_KEY` / `VAPID_PRIVATE_KEY`).
+
 ## Desarrollo
 ```
 npm install
 npm run build          # dist/ (PWA)
 npm run build:single   # dist-single/winter-arc.html (un archivo, sin service worker)
-npm test               # pruebas de lógica (score, rachas, fechas, objetivos, finanzas)
+npm test               # pruebas de lógica + servidor de notificaciones (cifrado RFC 8291, VAPID, horarios)
 npm run preview & npm run test:e2e   # flujo completo en viewport de iPhone
 ```
 
