@@ -65,6 +65,14 @@ export function goalsCSV(data: AppData): string {
   ]);
 }
 
+export function mealsCSV(data: AppData): string {
+  const rows: unknown[][] = [['fecha', 'comida', 'hora', 'alimento', 'cantidad', 'medida', 'gramos', 'kcal', 'proteina_g', 'carbohidratos_g', 'grasa_g', 'calidad']];
+  for (const m of [...data.meals].sort((a, b) => (a.date + (a.time ?? '')).localeCompare(b.date + (b.time ?? '')))) {
+    for (const i of m.items) rows.push([m.date, m.slot, m.time, i.name, i.qty, i.unit, i.grams, i.kcal, i.p, i.c, i.f, m.quality === 3 ? 'bien' : m.quality === 2 ? 'regular' : m.quality === 1 ? 'mal' : '']);
+  }
+  return csv(rows);
+}
+
 export function notesCSV(data: AppData): string {
   return csv([['fecha', 'tipo', 'nota'], ...data.notes.map((n) => [n.date, n.type, n.text])]);
 }

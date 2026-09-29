@@ -52,6 +52,8 @@ export function defaultData(): AppData {
     notes: [],
     reviews: {},
     reminders: defaultReminders(),
+    meals: [],
+    foods: [],
   };
 }
 

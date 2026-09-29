@@ -73,6 +73,8 @@ export function normalize(input: unknown): AppData {
     money: Array.isArray(d.money) ? d.money : [],
     notes: Array.isArray(d.notes) ? d.notes : [],
     reviews: d.reviews && typeof d.reviews === 'object' ? d.reviews : {},
+    meals: Array.isArray(d.meals) ? d.meals : [],
+    foods: Array.isArray(d.foods) ? d.foods : [],
     reminders: Array.isArray(d.reminders) ? d.reminders : defaultReminders(d.settings?.reminderTime || '21:00'),
   };
 }

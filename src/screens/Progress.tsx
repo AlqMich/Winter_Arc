@@ -9,6 +9,7 @@ import {
 } from '../lib/score';
 import { Bar, Seg, SectionTitle, cx, fmtMoney, fmtNum, fmtPct, toneFor, Empty } from '../ui/kit';
 import { Bars, LineChart } from '../ui/charts';
+import { mealsOn, totals } from '../lib/foods';
 import { IconAlert, IconFlame, IconRight } from '../ui/icons';
 
 type View = 'habitos' | 'cuerpo' | 'calendario';
@@ -283,6 +284,8 @@ function BodyView() {
         </div>
       )}
 
+      <NutritionCard />
+
       {sleep.length > 1 && (
         <div className="card pad">
           <div className="row between"><div className="label">Sueño (últimas 6 semanas)</div>
@@ -369,6 +372,28 @@ function CalendarView({ onPick }: { onPick: (d: ISODate) => void }) {
         );
       })}
       <p className="muted small center">Toca un día para abrir su registro. El domingo con borde indica revisión semanal guardada.</p>
+    </div>
+  );
+}
+
+function NutritionCard() {
+  const { data, now } = useStore();
+  const days = rangeDays(addDays(now, -27), now).filter((d) => d >= data.settings.startDate || data.meals.some((m) => m.date === d));
+  const logged = days.filter((d) => data.meals.some((m) => m.date === d));
+  if (!logged.length) return <div className="card pad"><div className="label">Calorías y proteína</div><p className="muted small">Registra tus comidas en Hoy → Alimentación para ver aquí tu promedio diario.</p></div>;
+  const per = (d: string) => totals(mealsOn(data, d));
+  const vals = logged.map(per);
+  const avgK = Math.round(vals.reduce((a, t) => a + t.kcal, 0) / vals.length);
+  const avgP = Math.round(vals.reduce((a, t) => a + t.p, 0) / vals.length);
+  const { kcalTarget, proteinTarget } = data.settings;
+  const shown = days.slice(-14);
+  return (
+    <div className="card pad">
+      <div className="row between"><div className="label">Calorías por día</div><div className="num small">prom. <b>{avgK.toLocaleString('es-MX')}</b> kcal</div></div>
+      <div className="muted small mb">Proteína promedio {avgP} g{proteinTarget ? ` de ${proteinTarget} g` : ''} · {logged.length} días con registro{kcalTarget ? ` · línea: meta ${kcalTarget.toLocaleString('es-MX')} kcal` : ''}</div>
+      <Bars threshold={kcalTarget} max={Math.max(kcalTarget ?? 0, ...shown.map((d) => per(d).kcal)) * 1.1 || 1}
+        format={(v) => (v >= 1000 ? `${(v / 1000).toFixed(1)}k` : String(Math.round(v)))}
+        data={shown.map((d) => { const t = per(d); return { key: d, label: DOW_LETTERS[parseISO(d).getDay()], value: t.meals ? t.kcal : null, tone: !kcalTarget ? 'accent' : t.kcal > kcalTarget * 1.1 ? 'warn' : 'good' }; })} />
     </div>
   );
 }

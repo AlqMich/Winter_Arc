@@ -150,6 +150,50 @@ export interface Reminder {
   body?: string;
 }
 
+/** Alimento: valores por 100 g (o 100 ml) y equivalencias de medidas caseras en gramos. */
+export interface Food {
+  id: string;
+  name: string;
+  aliases?: string[];
+  kcal: number;
+  p: number;   // proteína g
+  c: number;   // carbohidratos g
+  f: number;   // grasa g
+  units?: Partial<Record<FoodUnit, number>>;
+  custom?: boolean;
+}
+
+export type FoodUnit = 'g' | 'ml' | 'pieza' | 'taza' | 'cda' | 'cdita' | 'rebanada' | 'vaso' | 'lata' | 'puño' | 'scoop' | 'copa' | 'caballito' | 'porción';
+
+/** Lo que comiste. Guarda una copia de los valores calculados para que el historial no cambie. */
+export interface MealItem {
+  id: string;
+  name: string;
+  foodId?: string;
+  qty: number;
+  unit: FoodUnit;
+  grams: number;
+  kcal: number;
+  p: number;
+  c: number;
+  f: number;
+  approx?: boolean;     // la medida se estimó (p. ej. unidad sin equivalencia exacta)
+  unknown?: boolean;    // no se encontró el alimento: kcal manual o 0
+}
+
+export type MealQuality = 1 | 2 | 3; // 1 mal · 2 regular · 3 bien
+
+export interface Meal {
+  id: string;
+  date: ISODate;
+  slot: string;         // Desayuno, Colación, Comida, Cena, Otra
+  time?: string;
+  items: MealItem[];
+  quality?: MealQuality;
+  notes?: string;
+  createdAt: number;
+}
+
 export interface Settings {
   startDate: ISODate;
   durationDays: number;
@@ -161,6 +205,8 @@ export interface Settings {
   currency: string;
   weightUnit: string;
   onboarded: boolean;
+  kcalTarget?: number;
+  proteinTarget?: number;
 }
 
 export interface AppData {
@@ -175,4 +221,6 @@ export interface AppData {
   notes: Note[];
   reviews: Record<ISODate, WeeklyReview>;
   reminders: Reminder[];
+  meals: Meal[];
+  foods: Food[];
 }

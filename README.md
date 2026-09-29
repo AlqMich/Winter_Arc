@@ -9,6 +9,11 @@ App web personal (PWA, mobile-first) para seguir un reto de 90 días: hábitos, 
 
 > Los datos viven en el navegador del dispositivo. En iPhone, la app instalada tiene su propio almacenamiento (distinto de Safari). Haz un respaldo JSON semanal en Más → Datos y respaldo.
 
+## Alimentación
+Hoy → Alimentación → “+ Comida”. Escribe lo que comiste como mensaje (“2 huevos, 1 tortilla, 1 taza de papaya”):
+la app reconoce cantidad, medida y alimento con una base de ~100 alimentos comunes (valores aproximados por 100 g) y calcula calorías y macros.
+Lo que no reconoce lo puedes elegir de la lista o crear como alimento propio (se guarda para la próxima). Metas opcionales en Ajustes.
+
 ## Notificaciones (recordatorios push)
 Requieren desplegar desde GitHub (Netlify Drop no ejecuta funciones):
 1. Sube el contenido de esta carpeta a un repositorio de GitHub.

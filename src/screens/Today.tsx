@@ -9,6 +9,9 @@ import {
 import { Bar, Chips, Field, NumInput, Ring, Scale, Sheet, Stepper, Toggle, cx, fmtNum, useUi } from '../ui/kit';
 import { IconCheck, IconFlame, IconLeft, IconRight, IconPlus, IconAlert, IconMoon } from '../ui/icons';
 import { WorkoutIcon, WorkoutSheet, workoutSummary, typeLabel } from '../ui/WorkoutSheet';
+import { MealSheet, mealSummary } from '../ui/MealSheet';
+import { mealsOn, totals, QUALITY_LABEL } from '../lib/foods';
+import type { Meal } from '../lib/types';
 
 export default function Today() {
   const { data, update, day, setDay, now } = useStore();
@@ -16,6 +19,8 @@ export default function Today() {
   const [workoutOpen, setWorkoutOpen] = useState(false);
   const [editing, setEditing] = useState<Workout | null>(null);
   const [closeOpen, setCloseOpen] = useState(false);
+  const [mealOpen, setMealOpen] = useState(false);
+  const [editMeal, setEditMeal] = useState<Meal | null>(null);
 
   const arc = arcInfo(data, day);
   const score = dayScore(data, day);
@@ -129,6 +134,8 @@ export default function Today() {
         </div>
       )}
 
+      <FoodSection day={day} onAdd={() => { setEditMeal(null); setMealOpen(true); }} onEdit={(m) => { setEditMeal(m); setMealOpen(true); }} />
+
       <section className="group">
         <div className="group-head"><h3>Medidas</h3><span className="group-count">opcional</span></div>
         <div className="card pad grid2">
@@ -168,6 +175,7 @@ export default function Today() {
 
       <WorkoutSheet open={workoutOpen} onClose={() => setWorkoutOpen(false)} date={day} editing={editing} />
       <CloseDaySheet open={closeOpen} onClose={() => setCloseOpen(false)} day={day} />
+      <MealSheet open={mealOpen} onClose={() => setMealOpen(false)} date={day} editing={editMeal} />
     </div>
   );
 }
@@ -240,6 +248,7 @@ function CloseDaySheet({ open, onClose, day }: { open: boolean; onClose: () => v
   const { toast } = useUi();
   const log = data.logs[day];
   const m = log?.metrics ?? {};
+  const hasMeals = data.meals.some((x) => x.date === day);
   const setM = (k: MetricKey, v: number | undefined) => update((d) => {
     const l = ensureLog(d, day);
     if (v === undefined) delete l.metrics[k]; else l.metrics[k] = v;
@@ -275,15 +284,19 @@ function CloseDaySheet({ open, onClose, day }: { open: boolean; onClose: () => v
         <details className="more">
           <summary>Alimentación</summary>
           <div className="stack">
-            <Field label="Calidad del día"><Chips value={m.foodQuality} options={FOOD} onChange={(v) => setM('foodQuality', m.foodQuality === v ? undefined : v)} /></Field>
-            <div className="grid2">
-              <Field label="Comidas"><Stepper value={m.meals} onChange={(v) => setM('meals', v)} /></Field>
-              <Field label="Alcohol (bebidas)"><Stepper value={m.alcohol} onChange={(v) => setM('alcohol', v)} /></Field>
-            </div>
-            <div className="grid2">
-              <Field label="Proteína aprox. (g)" htmlFor="c-prot"><NumInput id="c-prot" value={m.protein} onChange={(v) => setM('protein', v)} integer /></Field>
-              <Field label="Calorías (opcional)" htmlFor="c-kcal"><NumInput id="c-kcal" value={m.calories} onChange={(v) => setM('calories', v)} integer /></Field>
-            </div>
+            {hasMeals ? (
+              <p className="muted small">Calculado de tus comidas: <b className="num">{m.meals}</b> comidas · <b className="num">{m.calories}</b> kcal · <b className="num">{m.protein}</b> g de proteína{m.foodQuality ? ` · calidad ${FOOD.find((x) => x.value === m.foodQuality)?.label.toLowerCase()}` : ''}.</p>
+            ) : (
+              <>
+                <Field label="Calidad del día"><Chips value={m.foodQuality} options={FOOD} onChange={(v) => setM('foodQuality', m.foodQuality === v ? undefined : v)} /></Field>
+                <div className="grid2">
+                  <Field label="Comidas"><Stepper value={m.meals} onChange={(v) => setM('meals', v)} /></Field>
+                  <Field label="Proteína aprox. (g)" htmlFor="c-prot"><NumInput id="c-prot" value={m.protein} onChange={(v) => setM('protein', v)} integer /></Field>
+                </div>
+                <p className="muted small">Para calcular calorías, registra tus comidas en Hoy → Alimentación.</p>
+              </>
+            )}
+            <Field label="Alcohol (bebidas)"><Stepper value={m.alcohol} onChange={(v) => setM('alcohol', v)} /></Field>
             <Toggle label="Comí fuera del plan" on={!!m.offPlan} onChange={(b) => setM('offPlan', b ? 1 : undefined)} />
             <Field label="Comentarios" htmlFor="c-food"><textarea id="c-food" className="input textarea" rows={2} value={log?.foodNotes ?? ''} onChange={(e) => setText('foodNotes', e.target.value)} /></Field>
           </div>
@@ -302,5 +315,49 @@ function CloseDaySheet({ open, onClose, day }: { open: boolean; onClose: () => v
         </details>
       </div>
     </Sheet>
+  );
+}
+
+function FoodSection({ day, onAdd, onEdit }: { day: ISODate; onAdd: () => void; onEdit: (m: Meal) => void }) {
+  const { data } = useStore();
+  const meals = mealsOn(data, day);
+  const t = totals(meals);
+  const { kcalTarget, proteinTarget } = data.settings;
+  return (
+    <section className="group">
+      <div className="group-head"><h3>Alimentación</h3>
+        <button className="link-btn" onClick={onAdd}><IconPlus size={16} /> Comida</button>
+      </div>
+      <div className="card list">
+        {meals.length > 0 && (
+          <div className="food-totals">
+            <div><span className="num food-big">{t.kcal.toLocaleString('es-MX')}</span><span className="muted small">{kcalTarget ? ` / ${kcalTarget.toLocaleString('es-MX')}` : ''} kcal</span>
+              {kcalTarget ? <span className="mini-bar"><span style={{ width: `${Math.min(1, t.kcal / kcalTarget) * 100}%`, background: t.kcal > kcalTarget * 1.05 ? 'var(--warn)' : undefined }} /></span> : null}</div>
+            <div><span className="num food-big">{t.p}</span><span className="muted small">{proteinTarget ? ` / ${proteinTarget}` : ''} g prot.</span>
+              {proteinTarget ? <span className="mini-bar"><span style={{ width: `${Math.min(1, t.p / proteinTarget) * 100}%` }} /></span> : null}</div>
+            <div><span className="num food-big">{t.meals}</span><span className="muted small"> comida{t.meals === 1 ? '' : 's'}</span>
+              {t.rated > 0 && <span className="muted small block">{t.good} de {t.rated} bien</span>}</div>
+          </div>
+        )}
+        {meals.map((m) => (
+          <button key={m.id} className="row-item meal-row" onClick={() => onEdit(m)}>
+            <span className="row-main">
+              <span className="row-title">{m.slot}{m.time && <span className="muted small"> · {m.time}</span>}</span>
+              <span className="row-sub">{mealSummary(m) || m.notes || 'Sin alimentos'}</span>
+            </span>
+            <span className="meal-row-right">
+              <span className="num">{totals([m]).kcal}<small> kcal</small></span>
+              {m.quality && <span className={cx('pill', m.quality === 3 ? 'good' : m.quality === 2 ? 'warn' : 'bad')}>{QUALITY_LABEL[m.quality]}</span>}
+            </span>
+          </button>
+        ))}
+        {meals.length === 0 && (
+          <button className="row-item" onClick={onAdd}>
+            <span className="row-icon"><IconPlus size={18} /></span>
+            <span className="row-main"><span className="row-title">Registrar comida</span><span className="row-sub">Escríbelo como mensaje: “2 huevos, 1 tortilla, café”</span></span>
+          </button>
+        )}
+      </div>
+    </section>
   );
 }

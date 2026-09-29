@@ -425,3 +425,32 @@ details.more > .stack { padding-bottom: 8px; }
 
 .switch-btn { min-width: 58px; min-height: 44px; display: flex; align-items: center; justify-content: flex-end; flex: none; }
 .rem-time { font-size: 15px; font-weight: 600; color: var(--ink); }
+
+/* Alimentación */
+.food-totals { display: grid; grid-template-columns: repeat(3, 1fr); gap: 10px; padding: 14px; }
+.food-totals > div { display: flex; flex-direction: column; min-width: 0; }
+.food-big { font-size: 26px; font-weight: 600; line-height: 1.05; }
+.food-totals .mini-bar { max-width: none; }
+.block { display: block; }
+.meal-row { align-items: flex-start; }
+.meal-row .row-sub { display: -webkit-box; -webkit-line-clamp: 2; -webkit-box-orient: vertical; white-space: normal; }
+.meal-row-right { display: flex; flex-direction: column; align-items: flex-end; gap: 4px; flex: none; }
+.meal-row-right .num { font-size: 18px; font-weight: 600; }
+.meal-head { align-items: center; }
+.meal-head .scroll-x { margin: 0; padding: 0; }
+.time-in { width: 112px; flex: none; }
+.meal-input { display: flex; gap: 8px; align-items: stretch; }
+.meal-input .textarea { flex: 1; min-width: 0; }
+.meal-input .btn { padding: 0 14px; }
+.meal-item { display: flex; flex-direction: column; gap: 6px; padding: 10px 12px 12px; }
+.meal-item.unknown { background: var(--warn-soft); }
+.meal-item-name { font-weight: 600; }
+.meal-item-controls { display: grid; grid-template-columns: 76px 1fr 84px; gap: 6px; align-items: center; }
+.meal-item-controls .input { min-height: 44px; }
+.qty-in { text-align: center; font-family: var(--font-display); font-size: 18px !important; font-weight: 600; }
+.meal-item-kcal { text-align: right; font-size: 18px; font-weight: 600; }
+.meal-item-kcal small, .meal-row-right small { font-size: 11px; color: var(--ink-3); font-weight: 500; }
+.kcal-in { text-align: center; }
+.row-item.compact { min-height: 50px; }
+.meal-totals { display: flex; align-items: baseline; gap: 12px; font-size: 14px; color: var(--ink-2); flex-wrap: wrap; }
+.meal-totals b { font-size: 24px; color: var(--ink); font-weight: 600; margin-right: -8px; }

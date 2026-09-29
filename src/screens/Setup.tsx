@@ -5,7 +5,7 @@ import { uid, defaultData } from '../lib/defaults';
 import { addDays, DOW_LETTERS, fmtLong, today } from '../lib/dates';
 import { arcInfo } from '../lib/score';
 import { normalize, storage } from '../lib/storage';
-import { toJSON, daysCSV, workoutsCSV, moneyCSV, goalsCSV, notesCSV, download, shareFile } from '../lib/exporter';
+import { toJSON, daysCSV, workoutsCSV, moneyCSV, goalsCSV, notesCSV, mealsCSV, download, shareFile } from '../lib/exporter';
 import { Field, NumInput, Seg, Sheet, Stepper, Toggle, useUi, cx, fmtNum, SectionTitle } from '../ui/kit';
 import { IconPlus, IconUp, IconDown, IconTrash, IconCopy, IconShare } from '../ui/icons';
 
@@ -217,6 +217,15 @@ export function Settings() {
         <Field label="Meta de ahorro mensual" htmlFor="s-sav"><NumInput id="s-sav" value={s.monthlySavingsTarget || undefined} onChange={(v) => set({ monthlySavingsTarget: v ?? 0 })} placeholder="0" /></Field>
       </div>
 
+      <SectionTitle>Alimentación</SectionTitle>
+      <div className="card pad stack">
+        <div className="grid2">
+          <Field label="Meta de calorías / día" htmlFor="s-kcal" hint="Opcional"><NumInput id="s-kcal" value={s.kcalTarget} onChange={(v) => set({ kcalTarget: v && v > 0 ? Math.round(v) : undefined })} integer /></Field>
+          <Field label="Meta de proteína (g)" htmlFor="s-prot" hint="Opcional"><NumInput id="s-prot" value={s.proteinTarget} onChange={(v) => set({ proteinTarget: v && v > 0 ? Math.round(v) : undefined })} integer /></Field>
+        </div>
+        <p className="muted small">Si las defines, Hoy muestra cuánto llevas y Progreso marca la meta en la gráfica. Tus alimentos propios: {data.foods.length}.</p>
+      </div>
+
       <SectionTitle>Categorías</SectionTitle>
       <div className="card list">
         {data.categories.map((c, i) => (
@@ -256,6 +265,7 @@ export function DataScreen() {
     { name: `winter-arc-finanzas-${stamp}.csv`, label: 'Finanzas (CSV)', mime: 'text/csv', make: () => moneyCSV(data) },
     { name: `winter-arc-objetivos-${stamp}.csv`, label: 'Objetivos (CSV)', mime: 'text/csv', make: () => goalsCSV(data) },
     { name: `winter-arc-notas-${stamp}.csv`, label: 'Notas (CSV)', mime: 'text/csv', make: () => notesCSV(data) },
+    { name: `winter-arc-comidas-${stamp}.csv`, label: 'Comidas (CSV)', mime: 'text/csv', make: () => mealsCSV(data) },
   ];
 
   const doExport = async (x: typeof exporters[number]) => {
