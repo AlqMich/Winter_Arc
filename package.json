@@ -1,0 +1,15 @@
+{
+  "name": "winter-arc",
+  "version": "1.0.0",
+  "private": true,
+  "description": "Winter Arc — app personal (PWA) para seguimiento de un reto de 90 días.",
+  "scripts": {
+    "build": "node scripts/build.mjs",
+    "build:single": "node scripts/build.mjs --single",
+    "test": "tsx tests/logic.test.ts",
+    "test:e2e": "node tests/flow.e2e.cjs http://localhost:4173/",
+    "preview": "cd dist && python3 -m http.server 4173"
+  },
+  "dependencies": { "react": "^19.2.0", "react-dom": "^19.2.0" },
+  "devDependencies": { "esbuild": "^0.27.0", "typescript": "^5.9.0", "tsx": "^4.20.0", "@types/react": "^19.2.0", "@types/react-dom": "^19.2.0", "playwright": "^1.56.0" }
+}
